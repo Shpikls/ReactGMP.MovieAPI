@@ -6,11 +6,18 @@ const { searchMovies, filterMovies, sortMovies, paginateMovies } = require('../u
 
 const getMovies = async (query) => {
   const foundMovies = searchMovies(movies, query)
+  const genres = Array.from(new Set(foundMovies.reduce((accum, item) => {
+    accum.push(...item.genres)
+    return accum
+  }, []))).sort()
   const filteredMovies = filterMovies(foundMovies, query)
   const sortedMovies = sortMovies(filteredMovies, query)
   const paginatedMovies = paginateMovies(sortedMovies, query)
 
-  return paginatedMovies
+  return {
+    ...paginatedMovies,
+    genres,
+  }
 }
 
 const getMovieById = async (movieId) => {
@@ -35,6 +42,7 @@ const addMovie = async (movie) => {
 }
 
 const updateMovie = async (movie) => {
+  console.log(movie)
   const movieIndex = movies.findIndex((m) => m.id === movie.id)
 
   if (movieIndex < 0) {

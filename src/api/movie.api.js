@@ -19,7 +19,7 @@ const validateRequestBody = (ctx, model, body) => {
 api.get('/movies',
   async (ctx, _next) => {
     const { offset, limit } = ctx.query
-    const { totalAmount, data } = await movieCtrl.getMovies(ctx.query)
+    const { totalAmount, data, genres } = await movieCtrl.getMovies(ctx.query)
 
     ctx.status = 200
     ctx.body = {
@@ -27,6 +27,7 @@ api.get('/movies',
       data,
       offset,
       limit,
+      totalGenres: genres,
     }
   })
 
@@ -42,6 +43,13 @@ api.get('/movies/:id',
     } else {
       ctx.status = 404
     }
+  })
+
+api.get('/genres',
+  async (ctx, _next) => {
+    const movie = await movieCtrl.getMovies(ctx.query)
+    ctx.status = 200
+    ctx.body = movie.genres
   })
 
 api.delete('/movies/:id',
